@@ -2,59 +2,33 @@
 
 declare(strict_types=1);
 
-
 namespace App\Services;
 
 use App\Models\Task;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class TaskService
 {
-
     /**
-     *
      * Создание новой задачи
      *
+     * @param array $data
+     * @return Task
      * @throws ValidationException
      */
-    public function create(array $data)
+    public function create(array $data): Task
     {
-        $this->validate($data);
+
+        $validator = $this->validate($data);
+
+        if($validator->fails())
+        {
+            throw new ValidationException($validator);
+        }
 
         return Task::create($data);
     }
-
-    /**
-     * Получение всех задач
-     *
-     * @return Collection
-     */
-    public function getAll(): Collection
-    {
-        return Task::all();
-    }
-
-    /**
-     *
-     * Получение задачи по ID
-     * @param int $id
-     * @return mixed
-     */
-    public function getById(int $id): mixed
-    {
-        $task = Task::find($id);
-
-        if(!$task)
-        {
-            throw new ModelNotFoundException("Task not found");
-        }
-
-        return $task;
-    }
-
 
     /**
      * Обновление задачи
@@ -69,9 +43,35 @@ class TaskService
 
         $task = Task::findOrFail($id);
 
-        /** Генерация правил валидации на основе переданных данных */
+        $validator = $this->validate($data);
+
+        if($validator->fails())
+        {
+            throw new ValidationException($validator);
+        }
+
+        $task->update($data);
+
+        return $task;
+    }
+
+
+    /**
+     * Обновление задачи
+     *
+     * @param int $id
+     * @param array $data
+     * @return Task
+     * @throws ValidationException
+     */
+    public function partialUpdate(int $id, array $data): Task
+    {
+        $task = Task::findOrFail($id);
+
+        /** Генерация правил валидации */
         $validationRules = $this->getValidationRules($data);
 
+        /** Валидация данных */
         $validator = Validator::make($data, $validationRules);
 
         if($validator->fails())
@@ -85,42 +85,7 @@ class TaskService
     }
 
     /**
-     *
-     * Удаление задачи
-     *
-     * @param int $id
-     * @return mixed
-     */
-    public function delete(int $id): mixed
-    {
-        $task = $this->getById($id);
-
-        $task->delete();
-
-        return $task;
-    }
-
-    /**
-     * Валидация данных для создания задачи
-     *
-     * @throws ValidationException
-     */
-    protected function validate(array $data): void
-    {
-        $validator = Validator::make($data, [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'status' => 'required|in:pending,in_progress,completed',
-        ]);
-
-        if($validator->fails())
-        {
-            throw new ValidationException($validator);
-        }
-    }
-
-    /**
-     * Метод для получения правил валидации в зависимости от переданных данных
+     * Метод для получения правил валидации
      *
      * @param array $data
      * @return array
@@ -145,6 +110,19 @@ class TaskService
         }
 
         return $rules;
+    }
+
+    /**
+     * @param array $data
+     * @return \Illuminate\Validation\Validator
+     */
+    public function validate(array $data): \Illuminate\Validation\Validator
+    {
+        return Validator::make($data, [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'nullable|in:pending,in_progress,completed',
+        ]);
     }
 }
 

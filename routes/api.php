@@ -1,12 +1,27 @@
 <?php
 
-use App\Http\Controllers\TaskController;
+use App\Http\Controllers\Api\CreateTaskController;
+use App\Http\Controllers\Api\DeleteTaskController;
+use App\Http\Controllers\Api\GetAllTasksController;
+use App\Http\Controllers\Api\GetTaskController;
+use App\Http\Controllers\Api\UpdateTaskController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::post('/tasks', [TaskController::class, 'create']);
-Route::get('/tasks', [TaskController::class, 'index']);
-Route::get('/tasks/{id}', [TaskController::class, 'show']);
-Route::put('/tasks/{id}', [TaskController::class, 'update']);
-Route::patch('/tasks/{id}', [TaskController::class, 'partialUpdate']);
-Route::delete('/tasks/{id}', [TaskController::class, 'delete']);
+// Создание задачи
+Route::post('/tasks', CreateTaskController::class);
+
+// Получение всех задач
+Route::get('/tasks', GetAllTasksController::class);
+
+// Получение одной задачи по ID
+Route::get('/tasks/{id}', GetTaskController::class);
+
+// Обновление задачи (полное)
+Route::put('/tasks/{id}', [UpdateTaskController::class, 'update']);
+
+// Обновление задачи (частичное)
+Route::patch('/tasks/{id}', [UpdateTaskController::class, 'partialUpdate']);
+
+// Удаление задачи по ID
+Route::delete('/tasks/{id}', DeleteTaskController::class);
