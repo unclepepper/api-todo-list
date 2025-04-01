@@ -27,7 +27,8 @@ class TaskRepository implements TaskRepositoryInterface
     public function update($id, array $data)
     {
         $task = Task::find($id);
-        if ($task) {
+        if($task)
+        {
             $task->update($data);
         }
         return $task;
@@ -36,7 +37,8 @@ class TaskRepository implements TaskRepositoryInterface
     public function delete($id)
     {
         $task = Task::find($id);
-        if ($task) {
+        if($task)
+        {
             $task->delete();
         }
         return $task;

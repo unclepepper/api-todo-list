@@ -91,16 +91,21 @@ class TaskController extends Controller
     public function partialUpdate(Request $request, int $id): JsonResponse
     {
 
-        try {
+        try
+        {
             $data = $request->only(['title', 'description', 'status']);
 
             $task = $this->taskService->update($id, $data);
 
             return response()->json($task);
 
-        } catch (ModelNotFoundException $e) {
+        }
+        catch(ModelNotFoundException $e)
+        {
             return response()->json(['message' => 'Task not found'], 404);
-        } catch (ValidationException $e) {
+        }
+        catch(ValidationException $e)
+        {
             return response()->json(['errors' => $e->errors()], 400);
         }
     }
