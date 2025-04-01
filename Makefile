@@ -4,7 +4,7 @@ DOCKER_COMPOSE="$(shell which docker-compose)"
 DOCKER="$(shell which docker)"
 CONTAINER_PHP="php-unit"
 
-init: generate-env up  ci right m-up
+init: generate-env up  ci right
 
 restart: down up
 
@@ -37,7 +37,6 @@ ci:
 
 cu:
 	${DOCKER_COMPOSE} exec ${CONTAINER_PHP} composer update --no-interaction
-
 
 m-up:
 	${DOCKER_COMPOSE} exec ${CONTAINER_PHP} php artisan migrate

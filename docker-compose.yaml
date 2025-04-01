@@ -24,23 +24,23 @@ services:
 
   database:
     restart: no
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    image: mysql:8.0
     container_name: ${APP_NAME}-database
-    ports:
-      - 5432:5432
-    volumes:
-      - db-api_todo:/var/lib/postgresql/data:rw
-      - ./docker/db-api_todo:/docker-entrypoint-database.d
     environment:
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE:  ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - db_${APP_NAME}:/var/lib/mysql
     networks:
-      - api_todo-network
+    - api_todo-network
 
 volumes:
-  db-api_todo: ~
-
+  db_api_todo:
+    driver: local
 
 networks:
   api_todo-network:
