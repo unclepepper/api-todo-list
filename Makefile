@@ -54,3 +54,7 @@ cc:
 right:
 	${DOCKER_COMPOSE} exec ${CONTAINER_PHP} chown -R www-data:www-data . && \
 	chmod -R guo+w storage
+
+test:
+	${DOCKER_COMPOSE} exec ${CONTAINER_PHP} php artisan test
+
