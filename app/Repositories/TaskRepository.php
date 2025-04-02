@@ -14,33 +14,36 @@ class TaskRepository implements TaskRepositoryInterface
         return Task::all();
     }
 
-    public function find($id)
+    public function find($id): Task
     {
-        return Task::find($id);
+        return Task::findOrFail($id);
     }
 
-    public function create(array $data)
+    public function create(array $data): Task
     {
         return Task::create($data);
     }
 
-    public function update($id, array $data)
+    public function update(Task $task, array $data): Task
     {
-        $task = Task::find($id);
-        if($task)
+
+        if(!empty($data))
         {
             $task->update($data);
         }
+
         return $task;
     }
 
-    public function delete($id)
+    public function delete($id): Task
     {
-        $task = Task::find($id);
+        $task = Task::findOrFail($id);
+
         if($task)
         {
             $task->delete();
         }
         return $task;
     }
+
 }

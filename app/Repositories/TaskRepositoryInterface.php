@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Models\Task;
+use Illuminate\Database\Eloquent\Collection;
+
 interface TaskRepositoryInterface
 {
-    public function all();
+    public function all(): Collection;
 
-    public function find($id);
+    public function find($id): Task;
 
-    public function create(array $data);
+    public function create(array $data): Task;
 
-    public function update($id, array $data);
+    public function update(Task $task, array $data): Task;
 
-    public function delete($id);
+    public function delete($id): Task;
 }

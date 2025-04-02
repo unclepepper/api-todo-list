@@ -6,12 +6,17 @@ namespace App\Http\Controllers\Api;
 
 
 use App\Http\Controllers\Controller;
-use App\Models\Task;
+use App\Repositories\TaskRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class GetTaskController extends Controller
 {
+
+    public function __construct(
+        private readonly TaskRepositoryInterface $taskRepository
+    ) {}
+
     /**
      * Получение задачи по ID.
      *
@@ -22,7 +27,8 @@ class GetTaskController extends Controller
     {
         try
         {
-            $task = Task::findOrFail($id);
+            $task = $this->taskRepository->find($id);
+
             return response()->json($task);
         }
         catch(ModelNotFoundException $e)

@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Task;
+use App\Repositories\TaskRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class TaskService
 {
+
+    public function __construct(
+        private readonly TaskRepositoryInterface $taskRepository
+    ) {}
+
     /**
      * Создание новой задачи
      *
@@ -27,7 +33,7 @@ class TaskService
             throw new ValidationException($validator);
         }
 
-        return Task::create($data);
+        return $this->taskRepository->create($data);
     }
 
     /**
@@ -41,7 +47,7 @@ class TaskService
     public function update(int $id, array $data): Task
     {
 
-        $task = Task::findOrFail($id);
+        $task = $this->taskRepository->find($id);
 
         $validator = $this->validate($data);
 
@@ -50,7 +56,7 @@ class TaskService
             throw new ValidationException($validator);
         }
 
-        $task->update($data);
+        $this->taskRepository->update($task, $data);
 
         return $task;
     }
